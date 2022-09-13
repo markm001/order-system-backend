@@ -3,10 +3,7 @@ package com.ccat.ordersys.controller;
 import com.ccat.ordersys.model.entity.Item;
 import com.ccat.ordersys.model.repository.ItemDao;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +28,21 @@ public class ItemController {
         if(retrievedItem.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        else return ResponseEntity.ok(retrievedItem);
+        else return ResponseEntity.ok(retrievedItem.get());
     }
+
+    //TODO: Add additional Api-Endpoints
+
+    @DeleteMapping("/items/{id}")
+    public ResponseEntity<Object> deleteItem(@PathVariable Long id) {
+        itemDao.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/items")
+    public ResponseEntity<Object> createItem(@RequestBody Item request) {
+        Item response = itemDao.save(request);
+        return ResponseEntity.ok(response);
+    }
+
 }

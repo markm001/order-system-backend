@@ -2,10 +2,7 @@ package com.ccat.ordersys.model.repository;
 
 import com.ccat.ordersys.model.entity.Item;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ItemDao {
@@ -46,5 +43,26 @@ public class ItemDao {
         return itemList.stream()
                 .filter(i -> i.getId().equals(id))
                 .findFirst();
+    }
+
+    public void deleteById(Long id) {
+        //Save all but Item to delete
+        this.itemList = itemList.stream()
+                .filter(i -> !i.getId().equals(id))
+                .collect(Collectors.toList());
+    }
+
+    public Item save(Item request) {
+        //Construct new Item & save to List:
+        Item response = new Item(
+                UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
+                request.getName(),
+                request.getDescription(),
+                request.getPrice(),
+                request.getTags()
+        );
+
+        itemList.add(response);
+        return response;
     }
 }
