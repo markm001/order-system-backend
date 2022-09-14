@@ -11,7 +11,11 @@ import java.util.Optional;
 @RestController
 public class ItemController {
 
-    private ItemDao itemDao = new ItemDao();
+    private final ItemDao itemDao;
+    public ItemController(ItemDao itemDao) {
+        this.itemDao = itemDao;
+    }
+
 
     //Get List of all Items (optional:?name={name}&tag={tag}):
     @RequestMapping("/items")

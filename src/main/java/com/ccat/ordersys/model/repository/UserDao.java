@@ -1,12 +1,14 @@
 package com.ccat.ordersys.model.repository;
 
 import com.ccat.ordersys.model.entity.User;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+@Service
 public class UserDao {
     List<User> userList = new ArrayList<>();
     public UserDao() {

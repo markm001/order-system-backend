@@ -1,5 +1,6 @@
 package com.ccat.ordersys.controller;
 
+import com.ccat.ordersys.exceptions.OrderSystemException;
 import com.ccat.ordersys.model.entity.Order;
 import com.ccat.ordersys.model.entity.OrderItem;
 import com.ccat.ordersys.model.repository.OrderDao;
@@ -14,27 +15,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OrderController {
 
-    OrderService orderService = new OrderService();
+    private final OrderService orderService;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     //Book Order:
     @PostMapping("/orders")
-    public Order createOrder(@RequestBody Order request) {
-        try {
-            return orderService.createOrder(request);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public Order createOrder(@RequestBody Order request) throws OrderSystemException {
+        return orderService.createOrder(request);
     }
 
     //Add OrderItems to Order
     @PostMapping("/orders/{id}/items")
     public OrderItem createOrderItem(
             @PathVariable(name="id") Long orderId,
-            @RequestBody OrderItem request) {
-        try {
-            return orderService.createOrderItem(orderId ,request);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+            @RequestBody OrderItem request) throws OrderSystemException {
+        return orderService.createOrderItem(orderId ,request);
     }
 }

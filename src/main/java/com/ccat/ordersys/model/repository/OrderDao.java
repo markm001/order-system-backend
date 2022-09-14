@@ -3,6 +3,7 @@ package com.ccat.ordersys.model.repository;
 import com.ccat.ordersys.model.entity.Order;
 import com.ccat.ordersys.model.entity.OrderStatus;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -10,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-@Repository
+@Service
 public class OrderDao {
     Set<Order> ordersList = new HashSet<>();
 

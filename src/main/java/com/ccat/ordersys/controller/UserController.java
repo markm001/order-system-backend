@@ -12,7 +12,11 @@ import java.util.Optional;
 
 @RestController
 public class UserController {
-    private UserDao userDao = new UserDao();
+
+    private final UserDao userDao;
+    public UserController(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     //Get User via Id:
     @RequestMapping("/users/{id}")

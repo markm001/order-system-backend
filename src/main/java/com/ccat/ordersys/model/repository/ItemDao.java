@@ -1,10 +1,13 @@
 package com.ccat.ordersys.model.repository;
 
 import com.ccat.ordersys.model.entity.Item;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 public class ItemDao {
 
     //TODO: Replace with Database.
