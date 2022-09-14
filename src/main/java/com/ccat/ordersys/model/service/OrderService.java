@@ -61,6 +61,7 @@ public class OrderService {
         //Return requested Item:
         OrderItem response = new OrderItem(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+                orderId,
                 request.getItemId(),
                 request.getQuantity());
         orderItemDao.save(response);

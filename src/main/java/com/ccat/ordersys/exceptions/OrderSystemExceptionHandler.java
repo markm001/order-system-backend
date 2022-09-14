@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.http.HttpRequest;
 
 @ControllerAdvice
 public class OrderSystemExceptionHandler {

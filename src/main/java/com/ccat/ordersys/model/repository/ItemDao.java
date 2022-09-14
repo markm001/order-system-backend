@@ -14,9 +14,9 @@ public class ItemDao {
     //Init List of Items:
     List<Item> itemList = new ArrayList<>();
     public ItemDao() {
-        itemList.add(new Item(1L,"Chocolate Bar","Is a food.",499, Set.of("Food","Sweet")));
-        itemList.add(new Item(2L,"Cake Mould","Is a product.",6999, Set.of("Item","Utility")));
-        itemList.add(new Item(3L,"Eclair au Chocolate","Is a desert.",1099, Set.of("Food","Desert")));
+        itemList.add(new Item(1L,"Chocolate Bar","Is a food.",499L, Set.of("Food","Sweet")));
+        itemList.add(new Item(2L,"Cake Mould","Is a product.",6999L, Set.of("Item","Utility")));
+        itemList.add(new Item(3L,"Eclair au Chocolate","Is a desert.",1099L, Set.of("Food","Desert")));
     }
 
 
