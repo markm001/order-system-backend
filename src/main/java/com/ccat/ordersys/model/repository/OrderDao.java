@@ -4,7 +4,6 @@ import com.ccat.ordersys.model.entity.Order;
 import com.ccat.ordersys.model.entity.OrderStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,15 +19,13 @@ public class OrderDao {
     }
 
     //Save booked Order:
-    public Order save(Order request) {
-        Order response = new Order(
-                UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
-                request.getUserId(),
-                LocalDateTime.now(),
-                OrderStatus.PENDING,
-                Set.of()
-        );
-        ordersList.add(response);
+    public Order saveOrUpdate(Order response) {
+        //if Id exist - Update Order:
+        if(findById(response.getId()).isPresent()) {
+            ordersList  = ordersList.stream()
+                    .map(o -> o.getId().equals(response.getId()) ? response : o)
+                    .collect(Collectors.toSet());
+        } else ordersList.add(response); //create new Order
         return response;
     }
 
@@ -37,6 +34,12 @@ public class OrderDao {
         return ordersList.stream()
                 .filter(o -> o.getUserId().equals(userId)
                         && o.getOrderStatus().equals(OrderStatus.PENDING))
+                .collect(Collectors.toList());
+    }
+
+    public List<Order> findByUserId(Long userId) {
+        return ordersList.stream()
+                .filter(o -> o.getUserId().equals(userId))
                 .collect(Collectors.toList());
     }
 }

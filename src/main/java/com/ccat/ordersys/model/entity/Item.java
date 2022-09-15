@@ -1,7 +1,6 @@
 package com.ccat.ordersys.model.entity;
 
 import java.util.Set;
-import java.util.UUID;
 
 public class Item {
 
@@ -13,7 +12,6 @@ public class Item {
 
     //Constructors:
     public Item() {
-
     }
 
     public Item(String name, String description, Long price, Set<String> tags) {
@@ -21,6 +19,12 @@ public class Item {
         this.description = description;
         this.price = price;
         this.tags = tags;
+    }
+
+    public Item(String name, String description, Long price) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
     }
 
     public Item(Long id, String name, String description, Long price, Set<String> tags) {

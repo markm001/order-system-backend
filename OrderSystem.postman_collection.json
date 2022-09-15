@@ -123,7 +123,36 @@
 			"response": []
 		},
 		{
-			"name": "GET users by id",
+			"name": "UPDATE Item",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"name\": \"Delicious Chocolate Bar\",\r\n        \"price\": 150\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/items/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"items",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET User by id",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -136,6 +165,59 @@
 					"path": [
 						"api",
 						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET User OrderList",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/users/1/orderlist",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"1",
+						"orderlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET all Orders for User with ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/orders/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"orders",
 						"1"
 					]
 				}
@@ -171,6 +253,35 @@
 			"response": []
 		},
 		{
+			"name": "UPDATE Order",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"orderStatus\": \"ORDERED\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/orders/7813940045250121316",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"orders",
+						"7813940045250121316"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "CREATE new OrderItem",
 			"request": {
 				"method": "POST",
@@ -185,7 +296,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/orders/3450501720390910683/items",
+					"raw": "localhost:8080/api/orders/856859967066032051/items",
 					"host": [
 						"localhost"
 					],
@@ -193,7 +304,7 @@
 					"path": [
 						"api",
 						"orders",
-						"3450501720390910683",
+						"856859967066032051",
 						"items"
 					]
 				}

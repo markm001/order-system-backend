@@ -1,7 +1,6 @@
 package com.ccat.ordersys.model.repository;
 
 import com.ccat.ordersys.model.entity.Item;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -55,17 +54,16 @@ public class ItemDao {
                 .collect(Collectors.toList());
     }
 
-    public Item save(Item request) {
-        //Construct new Item & save to List:
-        Item response = new Item(
-                UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
-                request.getName(),
-                request.getDescription(),
-                request.getPrice(),
-                request.getTags()
-        );
+    public Item saveOrUpdate(Item response) {
 
-        itemList.add(response);
+        //requested Id exists in itemList -> override Item, save new List:
+        if(findById(response.getId()).isPresent()) {
+            itemList = itemList.stream()
+                    .map(i -> i.getId().equals(response.getId()) ? response : i)
+                    .collect(Collectors.toList());
+        }
+        else itemList.add(response); //create new Item in List
+
         return response;
     }
 }

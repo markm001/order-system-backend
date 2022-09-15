@@ -24,7 +24,7 @@ public class UserController {
 
     //Get User via Id:
     @RequestMapping("/users/{id}")
-    public Optional<User> getUserById(@PathVariable Long id) throws OrderSystemException {
+    public User getUserById(@PathVariable Long id) {
         return userDao.findById(id);
     }
 

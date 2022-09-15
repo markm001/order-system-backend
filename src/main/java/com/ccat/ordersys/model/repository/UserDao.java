@@ -1,5 +1,6 @@
 package com.ccat.ordersys.model.repository;
 
+import com.ccat.ordersys.exceptions.InvalidIdException;
 import com.ccat.ordersys.exceptions.OrderSystemException;
 import com.ccat.ordersys.model.entity.User;
 import org.springframework.http.HttpStatus;
@@ -21,14 +22,13 @@ public class UserDao {
                 "John",
                 "Doe"));
     }
-    public Optional<User> findById(Long id) throws OrderSystemException {
+    public User findById(Long id) {
 
-        //Check if User with Id exists in DB - throw Exception
-        Optional<User> user = userList.stream()
+        //Check if User with Id exists in DB:
+        User user = userList.stream()
                 .filter(u -> u.getId().equals(id))
-                .findFirst();
-        if (user.isEmpty()) throw new OrderSystemException(
-                String.format("User with requested id %d could not be found", id), HttpStatus.BAD_REQUEST);
+                .findFirst()
+                .orElseThrow(new InvalidIdException(String.format("User with Id %d was not found.",id)));
 
         return user;
     }

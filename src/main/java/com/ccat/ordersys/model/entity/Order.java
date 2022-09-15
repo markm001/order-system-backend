@@ -15,6 +15,11 @@ public class Order {
     public Order() {
 
     }
+
+    public Order(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
     public Order(Long id, Long userId, LocalDateTime orderTime, OrderStatus orderStatus, Set<OrderItem> orderList) {
         this.id = id;
         this.userId = userId;

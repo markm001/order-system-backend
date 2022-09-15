@@ -1,10 +1,8 @@
 package com.ccat.ordersys.model.service;
 
+import com.ccat.ordersys.exceptions.InvalidIdException;
 import com.ccat.ordersys.exceptions.OrderSystemException;
-import com.ccat.ordersys.model.entity.Item;
-import com.ccat.ordersys.model.entity.Order;
-import com.ccat.ordersys.model.entity.OrderItem;
-import com.ccat.ordersys.model.entity.User;
+import com.ccat.ordersys.model.entity.*;
 import com.ccat.ordersys.model.repository.ItemDao;
 import com.ccat.ordersys.model.repository.OrderDao;
 import com.ccat.ordersys.model.repository.OrderItemDao;
@@ -12,7 +10,10 @@ import com.ccat.ordersys.model.repository.UserDao;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -30,15 +31,24 @@ public class OrderService {
         this.itemDao = itemDao;
     }
 
+    public List<Order> findAllOrders(Long userId) {
+        User user = userDao.findById(userId);
+        return orderDao.findByUserId(userId);
+    }
+
     public Order createOrder(Order request) throws OrderSystemException {
         //Check User-ID existence in DB, throw Exception:
-        Optional<User> user = userDao.findById(request.getUserId());
-        if(user.isEmpty()) {
-            throw new OrderSystemException(
-                    String.format("User with id %d was not found.",request.getUserId()),
-                    HttpStatus.BAD_REQUEST);
-        }
-        return orderDao.save(request);
+        User user = userDao.findById(request.getUserId());
+
+        Order response = new Order(
+                UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+                request.getUserId(),
+                LocalDateTime.now(),
+                OrderStatus.PENDING,
+                Set.of()
+        );
+
+        return orderDao.saveOrUpdate(response);
     }
 
     public OrderItem createOrderItem(Long orderId, OrderItem request) throws OrderSystemException {
@@ -66,5 +76,20 @@ public class OrderService {
                 request.getQuantity());
         orderItemDao.save(response);
         return response;
+    }
+
+    public Order updateOrder(Order request, Long orderId) {
+        final Order retrievedOrder = orderDao.findById(orderId)
+                .orElseThrow(new InvalidIdException(String.format("The requested Order-Id %d doesn't exist.",orderId)));
+
+        final Order newOrder = new Order(
+                retrievedOrder.getId(),
+                retrievedOrder.getUserId(),
+                retrievedOrder.getOrderTime(),
+                request.getOrderStatus() == null ? retrievedOrder.getOrderStatus() : request.getOrderStatus(),
+                retrievedOrder.getOrderList()
+        );
+
+        return orderDao.saveOrUpdate(newOrder);
     }
 }

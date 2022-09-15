@@ -7,10 +7,9 @@ import com.ccat.ordersys.model.repository.OrderDao;
 import com.ccat.ordersys.model.repository.UserDao;
 import com.ccat.ordersys.model.service.OrderService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class OrderController {
@@ -18,6 +17,11 @@ public class OrderController {
     private final OrderService orderService;
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
+    }
+    //GET all orders for User-Id:
+    @GetMapping("/orders/{id}")
+    public List<Order> getOrders(@PathVariable(name="id") Long userId) {
+        return orderService.findAllOrders(userId);
     }
 
     //Book Order:
@@ -32,5 +36,12 @@ public class OrderController {
             @PathVariable(name="id") Long orderId,
             @RequestBody OrderItem request) throws OrderSystemException {
         return orderService.createOrderItem(orderId ,request);
+    }
+
+    //Update Order(orderStatus) with Id:
+    @PutMapping("/orders/{id}")
+    public Order updateOrder(@RequestBody Order request,
+                                 @PathVariable(name="id") Long orderId) {
+        return orderService.updateOrder(request, orderId);
     }
 }

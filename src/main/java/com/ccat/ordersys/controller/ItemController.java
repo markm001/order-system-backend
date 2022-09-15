@@ -1,5 +1,6 @@
 package com.ccat.ordersys.controller;
 
+import com.ccat.ordersys.exceptions.InvalidIdException;
 import com.ccat.ordersys.model.entity.Item;
 import com.ccat.ordersys.model.repository.ItemDao;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class ItemController {
@@ -44,9 +46,35 @@ public class ItemController {
     }
 
     @PostMapping("/items")
-    public ResponseEntity<Object> createItem(@RequestBody Item request) {
-        Item response = itemDao.save(request);
-        return ResponseEntity.ok(response);
+    public Item createItem(@RequestBody Item request) {
+        //Construct new Item & save to List:
+        Item response = new Item(
+                UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
+                request.getName(),
+                request.getDescription(),
+                request.getPrice(),
+                request.getTags()
+        );
+        return itemDao.saveOrUpdate(response);
     }
 
+    @PutMapping("/items/{id}")
+    public Item updateItem(@RequestBody Item request,
+                           @PathVariable(name="id") Long itemId) {
+        //for empty fields in request -> Parser sets null
+        final Item originalItem =
+                itemDao.findById(itemId)
+                        .orElseThrow(new InvalidIdException(String.format("Requested Item-Id %d not found.",itemId)));
+
+        //Create new Item, check if request-Fields are null -> write origin or request Fields :: *Immutability achieved!*
+        final Item updatedItem = new Item(
+                    originalItem.getId(),
+                    request.getName() == null ? originalItem.getName() : request.getName(),
+                    request.getDescription() == null ? originalItem.getDescription() : request.getDescription(),
+                    request.getPrice() == null ? originalItem.getPrice() : request.getPrice(),
+                    originalItem.getTags()
+            );
+
+        return itemDao.saveOrUpdate(updatedItem);
+    }
 }
