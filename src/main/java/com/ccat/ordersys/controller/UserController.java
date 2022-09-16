@@ -25,7 +25,12 @@ public class UserController {
     //Get User via Id:
     @RequestMapping("/users/{id}")
     public User getUserById(@PathVariable Long id) {
-        return userDao.findById(id);
+        User response = userDao.getReferenceById(id);
+        return new User(response.getId(),
+                response.getEmail(),
+                response.getPassword(),
+                response.getFirstName(),
+                response.getLastName());
     }
 
     //Get User Order-List:

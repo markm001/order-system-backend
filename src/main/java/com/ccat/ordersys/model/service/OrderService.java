@@ -32,13 +32,13 @@ public class OrderService {
     }
 
     public List<Order> findAllOrders(Long userId) {
-        User user = userDao.findById(userId);
+        User user = userDao.getReferenceById(userId);
         return orderDao.findByUserId(userId);
     }
 
     public Order createOrder(Order request) throws OrderSystemException {
         //Check User-ID existence in DB, throw Exception:
-        User user = userDao.findById(request.getUserId());
+        User user = userDao.getReferenceById(request.getId());
 
         Order response = new Order(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
