@@ -1,13 +1,18 @@
 package com.ccat.ordersys.model.entity;
 
+import javax.persistence.*;
 import java.util.Set;
 
+@Entity
+@Table(name="items")
 public class Item {
-
+    @Id
     private Long id;
     private String name;
     private String description;
     private Long price;
+
+    @ElementCollection
     private Set<String> tags;
 
     //Constructors:

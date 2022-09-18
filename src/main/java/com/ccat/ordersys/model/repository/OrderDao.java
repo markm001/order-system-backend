@@ -1,45 +1,18 @@
 package com.ccat.ordersys.model.repository;
 
 import com.ccat.ordersys.model.entity.Order;
-import com.ccat.ordersys.model.entity.OrderStatus;
-import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
-@Service
-public class OrderDao {
-    private Set<Order> ordersList = new HashSet<>();
+@Repository
+public interface OrderDao extends JpaRepository<Order,Long> {
 
-    //Find Order by Id:
-    public Optional<Order> findById(Long orderId) {
-        return ordersList.stream()
-                .filter(o -> o.getId().equals(orderId))
-                .findFirst();
-    }
+    @Query(value = "SELECT o FROM Order o WHERE o.userId = ?1")//?1(first param)
+    List<Order> findAllByUserId(Long userId);
 
-    //Save booked Order:
-    public Order saveOrUpdate(Order response) {
-        //if Id exist - Update Order:
-        if(findById(response.getId()).isPresent()) {
-            ordersList  = ordersList.stream()
-                    .map(o -> o.getId().equals(response.getId()) ? response : o)
-                    .collect(Collectors.toSet());
-        } else ordersList.add(response); //create new Order
-        return response;
-    }
-
-    public List<Order> findAllByUserIdWhereOrderStatusIsPending(Long userId) {
-        //Filter all Orders by UserId & Pending Status
-        return ordersList.stream()
-                .filter(o -> o.getUserId().equals(userId)
-                        && o.getOrderStatus().equals(OrderStatus.PENDING))
-                .collect(Collectors.toList());
-    }
-
-    public List<Order> findByUserId(Long userId) {
-        return ordersList.stream()
-                .filter(o -> o.getUserId().equals(userId))
-                .collect(Collectors.toList());
-    }
+    @Query(value = "SELECT o FROM Order o WHERE o.orderStatus = 'PENDING' AND o.userId =:userId")
+    List<Order> findAllByUserIdWhereOrderStatusIsPending(Long userId);
 }

@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 public class ItemController {
@@ -24,20 +24,24 @@ public class ItemController {
     public List<Item> getAllItems(
             @RequestParam(required=false,name="name") String name,
             @RequestParam(required = false,name="tag") String tag) {
-        return itemDao.findByCriteria(name, tag);
+
+        //TODO: SLOW!! Use database for sorting instead!
+        List<Item> allItems = itemDao.findAll();
+
+        return allItems.stream()
+                .filter(i -> tag == null || lowercaseItemTags(i).contains(tag.toLowerCase()))
+                .filter(i -> name == null || i.getName().contains(name))
+                .map(i -> createItemResponseEntity(i))
+                .collect(Collectors.toList());
     }
 
     //Get Items by Id:
     @RequestMapping("/items/{id}")
-    public ResponseEntity<Object> getItemById(@PathVariable Long id) {
-        Optional<Item> retrievedItem = itemDao.findById(id);
-        if(retrievedItem.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        else return ResponseEntity.ok(retrievedItem.get());
-    }
+    public Item getItemById(@PathVariable Long id) {
+        Item retrievedItem = itemDao.getReferenceById(id);
 
-    //TODO: Add additional Api-Endpoints
+        return createItemResponseEntity(retrievedItem);
+    }
 
     @DeleteMapping("/items/{id}")
     public ResponseEntity<Object> deleteItem(@PathVariable Long id) {
@@ -55,7 +59,9 @@ public class ItemController {
                 request.getPrice(),
                 request.getTags()
         );
-        return itemDao.saveOrUpdate(response);
+        Item savedItem = itemDao.save(response);
+
+        return createItemResponseEntity(savedItem);
     }
 
     @PutMapping("/items/{id}")
@@ -75,6 +81,23 @@ public class ItemController {
                     originalItem.getTags()
             );
 
-        return itemDao.saveOrUpdate(updatedItem);
+        Item savedItem = itemDao.save(updatedItem);
+
+        return createItemResponseEntity(savedItem);
+    }
+
+    private Item createItemResponseEntity(Item item) {
+        return new Item(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getPrice(),
+                item.getTags());
+    }
+
+    private List<String> lowercaseItemTags(Item i) {
+        return i.getTags().stream()
+                .map(t -> t.toLowerCase())
+                .collect(Collectors.toList());
     }
 }

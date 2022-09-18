@@ -1,15 +1,11 @@
 package com.ccat.ordersys.controller;
 
 import com.ccat.ordersys.exceptions.OrderSystemException;
+import com.ccat.ordersys.model.OrderResponse;
 import com.ccat.ordersys.model.entity.Order;
 import com.ccat.ordersys.model.entity.OrderItem;
-import com.ccat.ordersys.model.repository.OrderDao;
-import com.ccat.ordersys.model.repository.UserDao;
 import com.ccat.ordersys.model.service.OrderService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class OrderController {
@@ -18,15 +14,16 @@ public class OrderController {
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
+
     //GET all orders for User-Id:
     @GetMapping("/orders/{id}")
-    public List<Order> getOrders(@PathVariable(name="id") Long userId) {
-        return orderService.findAllOrders(userId);
+    public OrderResponse getOrders(@PathVariable Long id) {
+        return orderService.getOrderById(id);
     }
 
     //Book Order:
     @PostMapping("/orders")
-    public Order createOrder(@RequestBody Order request) throws OrderSystemException {
+    public OrderResponse createOrder(@RequestBody Order request) {
         return orderService.createOrder(request);
     }
 
@@ -40,7 +37,7 @@ public class OrderController {
 
     //Update Order(orderStatus) with Id:
     @PutMapping("/orders/{id}")
-    public Order updateOrder(@RequestBody Order request,
+    public OrderResponse updateOrder(@RequestBody Order request,
                                  @PathVariable(name="id") Long orderId) {
         return orderService.updateOrder(request, orderId);
     }

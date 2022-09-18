@@ -31,7 +31,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/items?tag=Food&name=Bar",
+					"raw": "localhost:8080/api/items?tag=Food&name=Item",
 					"host": [
 						"localhost"
 					],
@@ -47,7 +47,7 @@
 						},
 						{
 							"key": "name",
-							"value": "Bar"
+							"value": "Item"
 						}
 					]
 				}
@@ -193,38 +193,6 @@
 			"response": []
 		},
 		{
-			"name": "GET all Orders for User with ID",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"userId\": 1\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8080/api/orders/1",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"orders",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "CREATE new Order",
 			"request": {
 				"method": "POST",
@@ -253,6 +221,26 @@
 			"response": []
 		},
 		{
+			"name": "GET Order by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/orders/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"orders",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "UPDATE Order",
 			"request": {
 				"method": "PUT",
@@ -267,7 +255,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/orders/7813940045250121316",
+					"raw": "localhost:8080/api/orders/2216919806171038970",
 					"host": [
 						"localhost"
 					],
@@ -275,7 +263,7 @@
 					"path": [
 						"api",
 						"orders",
-						"7813940045250121316"
+						"2216919806171038970"
 					]
 				}
 			},

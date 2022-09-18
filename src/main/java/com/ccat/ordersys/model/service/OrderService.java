@@ -1,46 +1,43 @@
 package com.ccat.ordersys.model.service;
 
-import com.ccat.ordersys.exceptions.InvalidIdException;
-import com.ccat.ordersys.exceptions.OrderSystemException;
-import com.ccat.ordersys.model.entity.*;
-import com.ccat.ordersys.model.repository.ItemDao;
+import com.ccat.ordersys.model.OrderResponse;
+import com.ccat.ordersys.model.entity.Order;
+import com.ccat.ordersys.model.entity.OrderItem;
+import com.ccat.ordersys.model.entity.OrderStatus;
+import com.ccat.ordersys.model.entity.User;
 import com.ccat.ordersys.model.repository.OrderDao;
-import com.ccat.ordersys.model.repository.OrderItemDao;
 import com.ccat.ordersys.model.repository.UserDao;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class OrderService {
 
     private final UserDao userDao;
     private final OrderDao orderDao;
-    private final OrderItemDao orderItemDao;
-    private final ItemDao itemDao;
 
-    public OrderService( UserDao userDao, OrderDao orderDao, OrderItemDao orderItemDao,ItemDao itemDao) {
+    public OrderService( UserDao userDao, OrderDao orderDao) {
         this.userDao = userDao;
         this.orderDao = orderDao;
-        this.orderItemDao = orderItemDao;
-        this.itemDao = itemDao;
     }
 
-    public List<Order> findAllOrders(Long userId) {
-        User user = userDao.getReferenceById(userId);
-        return orderDao.findByUserId(userId);
+    public OrderResponse getOrderById(Long id) {
+        Order order = orderDao.getReferenceById(id);
+        User user = userDao.getReferenceById(order.getUserId());
+
+        return mapToOrderResponseEntity(order,user);
     }
 
-    public Order createOrder(Order request) throws OrderSystemException {
-        //Check User-ID existence in DB, throw Exception:
-        User user = userDao.getReferenceById(request.getId());
+    public OrderResponse createOrder(Order request) {
+        //Check User-ID existence in DB:
+        final User user = userDao.getReferenceById(request.getUserId());
 
-        Order response = new Order(
+        final Order order = new Order(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
                 request.getUserId(),
                 LocalDateTime.now(),
@@ -48,48 +45,77 @@ public class OrderService {
                 Set.of()
         );
 
-        return orderDao.saveOrUpdate(response);
+        final Order savedOrder = orderDao.save(order);
+
+        return mapToOrderResponseEntity(savedOrder,user);
     }
 
-    public OrderItem createOrderItem(Long orderId, OrderItem request) throws OrderSystemException {
+    public OrderItem createOrderItem(Long orderId, OrderItem request) {
 
-        //Check Item-ID existence in DB, throw Exception:
-        Optional<Item> item = itemDao.findById(request.getItemId());
-        if(item.isEmpty()) {
-            throw new OrderSystemException(
-                    String.format("Item with id %d, could not be found.",request.getItemId()),
-                    HttpStatus.BAD_REQUEST);
-        }
-        //Check Order-ID existence in DB, throw Exception:
-        Optional<Order> order = orderDao.findById(orderId);
-        if(order.isEmpty()) {
-            throw new OrderSystemException(
-                    String.format("Order with id %d, could not be found.", orderId),
-                    HttpStatus.BAD_REQUEST);
-        }
+        Order order = orderDao.getReferenceById(orderId);
 
         //Return requested Item:
-        OrderItem response = new OrderItem(
+        final OrderItem orderItem = new OrderItem(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
-                orderId,
                 request.getItemId(),
                 request.getQuantity());
-        orderItemDao.save(response);
-        return response;
+
+        //Update OrderItems Set:
+        Set<OrderItem> updatedOrderItems = Stream
+                .concat(order.getOrderItems().stream(),
+                Stream.of(orderItem)).collect(Collectors.toSet());
+
+        //Create new Order and save:
+        Order updatedOrder = new Order(
+                order.getId(),
+                order.getUserId(),
+                order.getOrderTime(),
+                order.getOrderStatus(),
+                updatedOrderItems
+        );
+        orderDao.save(updatedOrder);
+
+        return createOrderItemResponseEntity(orderItem);
     }
 
-    public Order updateOrder(Order request, Long orderId) {
-        final Order retrievedOrder = orderDao.findById(orderId)
-                .orElseThrow(new InvalidIdException(String.format("The requested Order-Id %d doesn't exist.",orderId)));
+    public OrderResponse updateOrder(Order request, Long orderId) {
+        final Order retrievedOrder = orderDao.getReferenceById(orderId);
 
-        final Order newOrder = new Order(
+        final Order updatedOrder = new Order(
                 retrievedOrder.getId(),
                 retrievedOrder.getUserId(),
                 retrievedOrder.getOrderTime(),
                 request.getOrderStatus() == null ? retrievedOrder.getOrderStatus() : request.getOrderStatus(),
-                retrievedOrder.getOrderList()
+                retrievedOrder.getOrderItems()
         );
 
-        return orderDao.saveOrUpdate(newOrder);
+        Order savedOrder = orderDao.save(updatedOrder);
+        User user = userDao.getReferenceById(savedOrder.getUserId());
+
+        return mapToOrderResponseEntity(savedOrder, user);
+    }
+
+    private OrderResponse mapToOrderResponseEntity(Order order, User user) {
+        return new OrderResponse(
+                order.getId(),
+                new User(
+                        user.getId(),
+                        user.getEmail(),
+                        user.getPassword(),
+                        user.getFirstName(),
+                        user.getLastName()
+                ),
+                order.getOrderTime(),
+                order.getOrderStatus(),
+                order.getOrderItems()
+        );
+    }
+
+    static OrderItem createOrderItemResponseEntity(OrderItem savedOrderItem) {
+        return new OrderItem(
+                savedOrderItem.getId(),
+                savedOrderItem.getItemId(),
+                savedOrderItem.getQuantity()
+        );
     }
 }

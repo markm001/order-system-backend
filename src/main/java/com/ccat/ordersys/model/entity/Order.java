@@ -1,15 +1,26 @@
 package com.ccat.ordersys.model.entity;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+@Entity
+@Table(name="orders")
 public class Order {
-
+    @Id
     private Long id;
+
     private Long userId;
     private LocalDateTime orderTime;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-    private Set<OrderItem> orderList;
+
+    @ElementCollection
+    @CollectionTable(name="ORDER_ITEMS",
+            joinColumns={@JoinColumn(name="orderId", referencedColumnName="ID")})
+    private Set<OrderItem> orderItems;
+
 
     //Constructors:
     public Order() {
@@ -20,12 +31,12 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public Order(Long id, Long userId, LocalDateTime orderTime, OrderStatus orderStatus, Set<OrderItem> orderList) {
+    public Order(Long id, Long userId, LocalDateTime orderTime, OrderStatus orderStatus, Set<OrderItem> orderItems) {
         this.id = id;
         this.userId = userId;
         this.orderTime = orderTime;
         this.orderStatus = orderStatus;
-        this.orderList = orderList;
+        this.orderItems = orderItems;
     }
 
     //Getters & Setters:
@@ -33,39 +44,19 @@ public class Order {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getUserId() {
         return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public LocalDateTime getOrderTime() {
         return orderTime;
     }
 
-    public void setOrderTime(LocalDateTime orderTime) {
-        this.orderTime = orderTime;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public Set<OrderItem> getOrderList() {
-        return orderList;
-    }
-
-    public void setOrderList(Set<OrderItem> orderList) {
-        this.orderList = orderList;
+    public Set<OrderItem> getOrderItems() {
+        return orderItems;
     }
 }

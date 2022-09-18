@@ -1,6 +1,5 @@
 package com.ccat.ordersys.controller;
 
-import com.ccat.ordersys.exceptions.OrderSystemException;
 import com.ccat.ordersys.model.entity.OrderList;
 import com.ccat.ordersys.model.entity.User;
 import com.ccat.ordersys.model.repository.UserDao;
@@ -8,9 +7,6 @@ import com.ccat.ordersys.model.service.OrderListService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
-import java.util.Optional;
 
 @RestController
 public class UserController {

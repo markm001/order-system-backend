@@ -1,31 +1,24 @@
 package com.ccat.ordersys.model.service;
 
 import com.ccat.ordersys.exceptions.InvalidIdException;
-import com.ccat.ordersys.exceptions.OrderSystemException;
 import com.ccat.ordersys.model.entity.Item;
 import com.ccat.ordersys.model.entity.Order;
 import com.ccat.ordersys.model.entity.OrderItem;
 import com.ccat.ordersys.model.entity.OrderList;
 import com.ccat.ordersys.model.repository.ItemDao;
 import com.ccat.ordersys.model.repository.OrderDao;
-import com.ccat.ordersys.model.repository.OrderItemDao;
-import com.ccat.ordersys.model.repository.UserDao;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderListService {
     private final OrderDao orderDao;
-    private final OrderItemDao orderItemDao;
     private final ItemDao itemDao;
 
-    public OrderListService(OrderDao orderDao, OrderItemDao orderItemDao, ItemDao itemDao) {
+    public OrderListService(OrderDao orderDao, ItemDao itemDao) {
         this.orderDao = orderDao;
-        this.orderItemDao = orderItemDao;
         this.itemDao = itemDao;
     }
 
@@ -38,8 +31,10 @@ public class OrderListService {
                 .map(Order::getId)
                 .collect(Collectors.toList());
 
-        //Find pending Order IDs:
-        List<OrderItem> orderItems = orderItemDao.findAllByOrderId(pendingOrderIds);
+        //Extract Order-Item List from Orders:
+        List<OrderItem> orderItems = pendingOrders.stream()
+                .flatMap(i -> i.getOrderItems().stream()) //List of Lists -> List
+                .collect(Collectors.toList());
 
         //Calculate Total Sum + Shipping:
         Long shippingCost = 800L; //TODO: Shipping cost selector!

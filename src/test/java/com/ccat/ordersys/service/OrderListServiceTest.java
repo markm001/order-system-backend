@@ -4,7 +4,6 @@ import com.ccat.ordersys.model.entity.Item;
 import com.ccat.ordersys.model.entity.OrderItem;
 import com.ccat.ordersys.model.repository.ItemDao;
 import com.ccat.ordersys.model.repository.OrderDao;
-import com.ccat.ordersys.model.repository.OrderItemDao;
 import com.ccat.ordersys.model.service.OrderListService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,6 @@ import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -26,7 +24,6 @@ public class OrderListServiceTest {
         this.itemDao = mock(ItemDao.class);
         this.service = new OrderListService(
                 mock(OrderDao.class),
-                mock(OrderItemDao.class),
                 itemDao
         );
     }
@@ -112,7 +109,7 @@ public class OrderListServiceTest {
     }
 
     private void addOrderItem(Item savedItem, List<OrderItem> orderItems, int quantity) {
-        orderItems.add(new OrderItem(1L,1L, savedItem.getId(), quantity));
+        orderItems.add(new OrderItem(1L, savedItem.getId(), quantity));
     }
 
     private Item saveItem(long price) {

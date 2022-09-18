@@ -1,8 +1,10 @@
 package com.ccat.ordersys.model.entity;
 
+import javax.persistence.*;
+
+@Embeddable
 public class OrderItem {
     private Long id;
-    private Long orderId;
     private Long itemId;
     private Integer quantity;
 
@@ -10,9 +12,8 @@ public class OrderItem {
     public OrderItem() {
 
     }
-    public OrderItem(Long id,Long orderId, Long itemId, Integer quantity) {
+    public OrderItem(Long id, Long itemId, Integer quantity) {
         this.id = id;
-        this.orderId = orderId;
         this.itemId = itemId;
         this.quantity = quantity;
     }
@@ -20,10 +21,6 @@ public class OrderItem {
     //Getters & Setters:
     public Long getId() {
         return id;
-    }
-
-    public Long getOrderId() {
-        return orderId;
     }
 
     public Long getItemId() {
