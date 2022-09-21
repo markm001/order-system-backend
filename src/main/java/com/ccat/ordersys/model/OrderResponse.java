@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class OrderResponse {
     private Long id;
-    private User user;
+    private UserResponse user;
     private LocalDateTime orderTime;
     private OrderStatus orderStatus;
     private Set<OrderItem> orderItems;
@@ -18,7 +18,7 @@ public class OrderResponse {
 
     }
 
-    public OrderResponse(Long id, User user, LocalDateTime orderTime, OrderStatus orderStatus, Set<OrderItem> orderItems) {
+    public OrderResponse(Long id, UserResponse user, LocalDateTime orderTime, OrderStatus orderStatus, Set<OrderItem> orderItems) {
         this.id = id;
         this.user = user;
         this.orderTime = orderTime;
@@ -30,7 +30,7 @@ public class OrderResponse {
         return id;
     }
 
-    public User getUser() {
+    public UserResponse getUser() {
         return user;
     }
 

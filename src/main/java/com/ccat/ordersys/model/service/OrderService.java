@@ -1,6 +1,7 @@
 package com.ccat.ordersys.model.service;
 
 import com.ccat.ordersys.model.OrderResponse;
+import com.ccat.ordersys.model.UserResponse;
 import com.ccat.ordersys.model.entity.Order;
 import com.ccat.ordersys.model.entity.OrderItem;
 import com.ccat.ordersys.model.entity.OrderStatus;
@@ -98,10 +99,9 @@ public class OrderService {
     private OrderResponse mapToOrderResponseEntity(Order order, User user) {
         return new OrderResponse(
                 order.getId(),
-                new User(
+                new UserResponse(
                         user.getId(),
                         user.getEmail(),
-                        user.getPassword(),
                         user.getFirstName(),
                         user.getLastName()
                 ),

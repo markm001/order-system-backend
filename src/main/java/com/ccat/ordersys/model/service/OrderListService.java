@@ -26,11 +26,6 @@ public class OrderListService {
         //Find all pending Orders for specific User:
         List<Order> pendingOrders = orderDao.findAllByUserIdWhereOrderStatusIsPending(userId);
 
-        //Map List of Order Ids:
-        List<Long> pendingOrderIds = pendingOrders.stream()
-                .map(Order::getId)
-                .collect(Collectors.toList());
-
         //Extract Order-Item List from Orders:
         List<OrderItem> orderItems = pendingOrders.stream()
                 .flatMap(i -> i.getOrderItems().stream()) //List of Lists -> List
