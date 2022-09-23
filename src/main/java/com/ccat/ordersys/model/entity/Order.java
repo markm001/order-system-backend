@@ -59,4 +59,28 @@ public class Order {
     public Set<OrderItem> getOrderItems() {
         return orderItems;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Order order = (Order) o;
+
+        if (!id.equals(order.id)) return false;
+        if (!userId.equals(order.userId)) return false;
+        if (!orderTime.equals(order.orderTime)) return false;
+        if (orderStatus != order.orderStatus) return false;
+        return orderItems.equals(order.orderItems);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + userId.hashCode();
+        result = 31 * result + orderTime.hashCode();
+        result = 31 * result + orderStatus.hashCode();
+        result = 31 * result + orderItems.hashCode();
+        return result;
+    }
 }
