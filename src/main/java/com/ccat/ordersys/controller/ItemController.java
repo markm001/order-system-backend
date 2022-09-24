@@ -3,6 +3,7 @@ package com.ccat.ordersys.controller;
 import com.ccat.ordersys.exceptions.InvalidIdException;
 import com.ccat.ordersys.model.entity.Item;
 import com.ccat.ordersys.model.repository.ItemDao;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,6 @@ import java.util.stream.Collectors;
 
 @RestController
 public class ItemController {
-
     private final ItemDao itemDao;
     public ItemController(ItemDao itemDao) {
         this.itemDao = itemDao;
@@ -25,11 +25,10 @@ public class ItemController {
             @RequestParam(required=false,name="name") String name,
             @RequestParam(required = false,name="tag") String tag) {
 
-        //TODO: SLOW!! Use database for sorting instead!
-        List<Item> allItems = itemDao.findAll();
+        List<Item> allItems = tag == null ? itemDao.findAll() : itemDao.findByTag(tag.toLowerCase());
+
 
         return allItems.stream()
-                .filter(i -> tag == null || lowercaseItemTags(i).contains(tag.toLowerCase()))
                 .filter(i -> name == null || i.getName().contains(name))
                 .map(i -> createItemResponseEntity(i))
                 .collect(Collectors.toList());
@@ -43,12 +42,14 @@ public class ItemController {
         return createItemResponseEntity(retrievedItem);
     }
 
+    @CacheEvict(value = "itemsByTag", allEntries = true)
     @DeleteMapping("/items/{id}")
     public ResponseEntity<Object> deleteItem(@PathVariable Long id) {
         itemDao.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
+    @CacheEvict(value = "itemsByTag", allEntries = true)
     @PostMapping("/items")
     public Item createItem(@RequestBody Item request) {
         //Construct new Item & save to List:
@@ -64,6 +65,7 @@ public class ItemController {
         return createItemResponseEntity(savedItem);
     }
 
+    @CacheEvict(value = "itemsByTag", allEntries = true)
     @PutMapping("/items/{id}")
     public Item updateItem(@RequestBody Item request,
                            @PathVariable(name="id") Long itemId) {

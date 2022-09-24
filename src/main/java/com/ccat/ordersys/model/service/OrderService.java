@@ -1,11 +1,9 @@
 package com.ccat.ordersys.model.service;
 
+import com.ccat.ordersys.client.FakerClient;
 import com.ccat.ordersys.model.OrderResponse;
 import com.ccat.ordersys.model.UserResponse;
-import com.ccat.ordersys.model.entity.Order;
-import com.ccat.ordersys.model.entity.OrderItem;
-import com.ccat.ordersys.model.entity.OrderStatus;
-import com.ccat.ordersys.model.entity.User;
+import com.ccat.ordersys.model.entity.*;
 import com.ccat.ordersys.model.repository.OrderDao;
 import com.ccat.ordersys.model.repository.UserDao;
 import org.springframework.stereotype.Service;
@@ -21,10 +19,12 @@ public class OrderService {
 
     private final UserDao userDao;
     private final OrderDao orderDao;
+    private final FakerClient fakerClient;
 
-    public OrderService( UserDao userDao, OrderDao orderDao) {
+    public OrderService( UserDao userDao, OrderDao orderDao, FakerClient fakerClient) {
         this.userDao = userDao;
         this.orderDao = orderDao;
+        this.fakerClient = fakerClient;
     }
 
     public OrderResponse getOrderById(Long id) {
@@ -103,7 +103,8 @@ public class OrderService {
                         user.getId(),
                         user.getEmail(),
                         user.getFirstName(),
-                        user.getLastName()
+                        user.getLastName(),
+                        fakerClient.getAddress()
                 ),
                 order.getOrderTime(),
                 order.getOrderStatus(),

@@ -1,5 +1,7 @@
 package com.ccat.ordersys.model;
 
+import com.ccat.ordersys.model.entity.Address;
+
 public class UserResponse {
 
     private Long id;
@@ -7,16 +9,19 @@ public class UserResponse {
     private String firstName;
     private String lastName;
 
+    private Address address;
+
     //Constructors:
     public UserResponse() {
 
     }
 
-    public UserResponse(Long id, String email, String firstName, String lastName) {
+    public UserResponse(Long id, String email, String firstName, String lastName, Address address) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.address = address;
     }
 
     public Long getId() {
@@ -33,5 +38,9 @@ public class UserResponse {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public Address getAddress() {
+        return address;
     }
 }
