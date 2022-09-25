@@ -1,12 +1,14 @@
 package com.ccat.ordersys.controller;
 
 import com.ccat.ordersys.client.FakerClient;
+import com.ccat.ordersys.client.FakerRestClient;
 import com.ccat.ordersys.model.UserResponse;
 import com.ccat.ordersys.model.entity.Address;
 import com.ccat.ordersys.model.entity.OrderList;
 import com.ccat.ordersys.model.entity.User;
 import com.ccat.ordersys.model.repository.UserDao;
 import com.ccat.ordersys.model.service.OrderListService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +28,9 @@ public class UserController {
 
     //Get User via Id:
     @RequestMapping("/users/{id}")
-    public UserResponse getUserById(@PathVariable Long id) {
+    @Operation(summary="Get User with specific Id")
+    public UserResponse getUserById(
+            @PathVariable Long id) {
 
         Address userAddress = fakerClient.getAddress();
 
